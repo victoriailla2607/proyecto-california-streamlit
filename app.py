@@ -30,7 +30,7 @@ st.write(df_california.isnull().sum())
 st.sidebar.markdown("## 🎛️ Filtros de Exploración")
 st.sidebar.write("Ajusta los filtros para explorar el dataset")
 
-# Filtro 1: Edad de la vivienda (slider)
+# Filtro: Edad de la vivienda
 min_age = int(df_california["HouseAge"].min())
 max_age = int(df_california["HouseAge"].max())
 
@@ -44,7 +44,7 @@ df_filtered = df_california[
     (df_california["HouseAge"] <= age_range[1])
 ]
 
-# Filtro 2: Latitud mínima
+# Filtro: Latitud mínima
 lat_min = st.sidebar.number_input(
     "Latitud mínima:",
     min_value=float(df_california["Latitude"].min()),
@@ -88,7 +88,17 @@ ax_scatter.set_title("MedInc vs MedHouseVal")
 
 st.pyplot(fig_scatter)
 
-# Mapa (opcional)
+# --------------------------
+# MAPA GEOGRÁFICO (CORREGIDO)
+# --------------------------
+
 st.subheader("🗺️ Mapa de las viviendas filtradas")
 
-st.map(df_filtered[["Latitude", "Longitude"]])
+# Renombrar columnas a minúsculas porque st.map exige "latitude" y "longitude"
+df_map = df_filtered.rename(columns={"Latitude": "latitude", "Longitude": "longitude"})
+
+# Mostrar mapa si hay datos
+if not df_map.empty:
+    st.map(df_map[["latitude", "longitude"]])
+else:
+    st.write("No hay datos para mostrar en el mapa con los filtros seleccionados.")
